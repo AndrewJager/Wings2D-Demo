@@ -16,7 +16,7 @@ import com.wings2d.framework.misc.Easings;
 import com.wings2d.framework.rendering.DrawPanelJPanel;
 
 public class MyGame extends Game{
-	private Player player;
+//	private Player player;
 	private Grid grid;
 
 	public MyGame() {
@@ -29,7 +29,7 @@ public class MyGame extends Game{
 		
 		this.setTitle("Wings2D Demo");
 		
-		player = new Player();
+		
 //		grid = new Grid(5, 4, this.getDrawPanel().getDrawComponent());
 		
 		
@@ -37,9 +37,11 @@ public class MyGame extends Game{
 //		System.out.println(Easings.easeInElastic(0.5));
 //		System.out.println(Easings.easeInElastic(1));
 		
-		player.BuildInput(getFullPanel());
-		grid = new Grid(8, 7, this.getDrawPanel(), this.getManager());
 		
+		grid = new Grid(8, 7, this.getDrawPanel(), this.getManager());
+//		player = new Player(grid, grid.getNodes()[1][1]);
+//		player.BuildInput(getFullPanel());
+//		
 		JLabel test = new JLabel("Test");
 		this.getDrawPanel().add(test);
 	}
@@ -48,7 +50,6 @@ public class MyGame extends Game{
 	public void update(final double delta) {
 		super.update(delta);
 		
-		player.update(delta);
 		grid.update(delta);
 	}
 	
@@ -61,7 +62,7 @@ public class MyGame extends Game{
 		g2d.setColor(Color.WHITE);
 		g2d.drawString("FPS: " + this.getDebugInfo().getFPS(), 10, 10);
 		
-		player.render(g2d, scale);
+//		player.render(g2d, scale);
 		
 		grid.render(g2d, scale, this);
 	}

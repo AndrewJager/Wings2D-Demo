@@ -42,6 +42,7 @@ public class Grid {
 	private int x, y;
 	private Node[][] nodes;
 	private Node activeNode = null;
+	private Node playerNode;
 	private List<Node> path;
 
 	private int cellSize;
@@ -83,11 +84,16 @@ public class Grid {
             	addNode(nodes[i][j].neighbors, i, j + 1); // South 
             	addNode(nodes[i][j].neighbors, i + 1, j); // East
             	addNode(nodes[i][j].neighbors, i - 1, j); // West
-//            	addNode(nodes[i][j].neighbors, i - 1, j - 1); // Northwest
+            	addNode(nodes[i][j].neighbors, i - 1, j - 1); // Northwest
+            	addNode(nodes[i][j].neighbors, i + 1, j - 1); // Northeast
+            	addNode(nodes[i][j].neighbors, i - 1, j + 1); // Southwest
+            	addNode(nodes[i][j].neighbors, i + 1, j + 1); // Southeast
             }
         }
         
-        test = new GridEntity(getNodeX(nodes[0][0]), getNodeY(nodes[0][0]));
+        playerNode = nodes[0][0];
+
+        test = new GridEntity(this, playerNode);
         
         panel.addMouseMotionListener(new MouseMotionListener() {
 			public void mouseDragged(MouseEvent e) {}
@@ -112,17 +118,40 @@ public class Grid {
 				}
 			}
         });
-        panel.addMouseListener(new ImprovedMouseListener() {
+        panel.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (activeNode != null) {
-					test.setTarget(getNodeX(activeNode), getNodeY(activeNode), manager.getScale());
-					path = aStarPath(nodes[0][0], nodes[activeNode.getX()][activeNode.getY()]);
-				}
+				/* In what must be one of the worst software design decisions I've seen,
+				 * the mouseClicked event doesn't fire if the mouse is moved -even by a pixel-
+				 * between the press and release. Since the action of pressing the mouse button
+				 * will sometimes cause the mouse to move a bit, any application using the
+				 * mouseClicked event will miss some of the users clicks. 
+				 * 
+				 * This event is genuinely unusable because of this.
+				 */
+
 			}
+			@Override
+			public void mousePressed(MouseEvent e) {}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if (activeNode != null) {
+//					test.setTarget(getNodeX(activeNode), getNodeY(activeNode), manager.getScale());
+					path = aStarPath(playerNode, nodes[activeNode.getX()][activeNode.getY()]);
+					test.setPath(path);
+//					playerNode = nodes[activeNode.getX()][activeNode.getY()];
+				}
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			@Override
+			public void mouseExited(MouseEvent e) {}
         });
         
-        path = aStarPath(nodes[0][0], nodes[1][3]);
+        path = aStarPath(playerNode, nodes[1][3]);
 	}
 	
 	public void render(final Graphics2D g2d, final double scale, final Game game) {
@@ -268,18 +297,6 @@ public class Grid {
 		}
 	}
 	
-//	private List<SearchNode> getAdjacient(final int x, final int y) {
-//		List<SearchNode> a = new ArrayList<SearchNode>();
-//		addNode(a, x - 1, y - 1); // up left
-//		addNode(a, x, y - 1); // up
-//		addNode(a, x + 1, y - 1); // up right
-//		addNode(a, x - 1, y); // left
-//		addNode(a, x + y, y); // right
-//		addNode(a, x - 1, y + 1); // down left
-//		addNode(a, x, y + 1); // down
-//		addNode(a, x + 1, y + 1); // down right
-//		return a;
-//	}
 	private void addNode(final List<Node> a, final int x, final int y) {
 		if (nodeExists(x, y)) {
 			a.add(nodes[x][y]);
@@ -293,5 +310,17 @@ public class Grid {
 			}
 		}
 		return exists;
+	}
+	
+	public LevelManager getManager() {
+		return manager;
+	}
+	
+	public Node[][] getNodes() {
+		return nodes;
+	}
+	
+	public void OnEntityPathComplete(final GridEntity e) {
+		playerNode = e.getNode();
 	}
 }

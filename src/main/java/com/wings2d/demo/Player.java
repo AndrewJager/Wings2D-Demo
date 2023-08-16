@@ -8,6 +8,8 @@ import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import com.wings2d.framework.core.LevelManager;
+
 public class Player extends GridEntity{
 	@SuppressWarnings("serial")
 	public static class StartMove extends AbstractAction {
@@ -51,8 +53,8 @@ public class Player extends GridEntity{
 	private double width = 50;
 	private double height = 50;
 	
-	public Player() {
-		super(0, 0);
+	public Player(final Grid grid, final Node node) {
+		super(grid, node);
 		moveRight = false;
 		moveLeft = false;
 	}

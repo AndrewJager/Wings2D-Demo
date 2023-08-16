@@ -2,6 +2,9 @@ package com.wings2d.demo;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.List;
+
+import com.wings2d.framework.core.LevelManager;
 
 public class GridEntity {
 	public enum EntityState {
@@ -14,23 +17,25 @@ public class GridEntity {
 		HOLD,
 	}
 	
+	protected Grid grid;
 	protected double x, y; // Unscaled, grid will handle scaling
 	protected double targetX, targetY;
 	protected EntityState state;
 	protected Dir xDir, yDir;
+	protected List<Node> path;
+	protected int curNode;
+	protected Node node;
 	
 	private double speed = 100;
 	
-	public GridEntity(final double x, final double y) {
-		this.setX(x);
-		this.setY(y);
+	public GridEntity(final Grid grid, final Node playerNode) {
+		this.grid = grid;
+		this.node = playerNode;
+		this.setX(grid.getNodeX(node));
+		this.setY(grid.getNodeY(node));
 		state = EntityState.IDLE;
 		xDir = Dir.HOLD;
 		yDir = Dir.HOLD;
-	}
-	
-	public GridEntity() {
-		this(0, 0);
 	}
 
 	public double getX() {
@@ -60,10 +65,16 @@ public class GridEntity {
 		this.y += (y * dt);
 	}
 	
-	public void setTarget(final double targetX, final double targetY, final double scale) {
-		this.targetX = targetX / scale;
-		this.targetY = targetY / scale;
-		
+	public void setPath(List<Node> path) {
+		this.path = path;
+		curNode = 0;
+		node = path.get(curNode);
+		setTarget(node);
+	}
+	
+	public void setTarget(final Node n) {
+		this.targetX = grid.getNodeX(n);
+		this.targetY = grid.getNodeY(n);
 		if (this.x > this.targetX) {
 			this.xDir = Dir.NEG;
 		}
@@ -83,7 +94,6 @@ public class GridEntity {
 		else {
 			this.yDir = Dir.HOLD;
 		}
-		
 		this.state = EntityState.MOVING;
 	}
 	
@@ -122,6 +132,26 @@ public class GridEntity {
 			}
 			case HOLD -> {}
 			}
+			
+			if ((xDir == Dir.HOLD) && (yDir == Dir.HOLD)) {
+				if (curNode < path.size() - 1) {
+					curNode++;
+					
+					// Why does this hang instead of raising exception if I don't catch it here?
+//					try {
+//					System.out.println(path.get(2));
+//					}
+//					catch (Exception e){
+//						System.out.println(e.getMessage());
+//					}
+					node = path.get(curNode);
+					setTarget(path.get(curNode));
+				}
+				else {
+					this.state = EntityState.IDLE;
+					grid.OnEntityPathComplete(this);
+				}
+			}
 		}
 		}
 	}
@@ -132,5 +162,9 @@ public class GridEntity {
 		int size = 20;
 		g2d.fillRect((int)(0 - (size / 2) * scale), (int)(0 - (size / 2) * scale), (int)(size * scale), (int)(size * scale));
 		g2d.translate(-getX() * scale, -getY() * scale);
+	}
+	
+	public Node getNode() {
+		return node;
 	}
 }
