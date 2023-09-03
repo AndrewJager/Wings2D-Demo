@@ -38,7 +38,7 @@ public class MyGame extends Game{
 //		System.out.println(Easings.easeInElastic(1));
 		
 		
-		grid = new Grid(8, 7, this.getDrawPanel(), this.getManager());
+		grid = new Grid(25, 15, this.getDrawPanel(), this.getManager());
 //		player = new Player(grid, grid.getNodes()[1][1]);
 //		player.BuildInput(getFullPanel());
 //		

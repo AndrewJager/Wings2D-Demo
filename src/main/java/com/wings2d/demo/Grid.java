@@ -139,9 +139,13 @@ public class Grid {
 				if (activeNode != null) {
 //					test.setTarget(getNodeX(activeNode), getNodeY(activeNode), manager.getScale());
 					path = aStarPath(playerNode, nodes[activeNode.getX()][activeNode.getY()]);
-					test.setPath(path);
+					if (path != null) {
+						test.setPath(path);
+					}
 //					playerNode = nodes[activeNode.getX()][activeNode.getY()];
 				}
+				
+//				test.setTarget(e.getX(), e.getY());
 				
 			}
 
@@ -185,15 +189,28 @@ public class Grid {
             }
         }
         
+        for (int i = 0; i < x; i++) {
+            for (int j = 0; j < y; j++) {
+            	Node node = nodes[i][j];
+            	g2d.setColor(Color.WHITE);
+            	g2d.translate(this.getNodeX(node), this.getNodeY(node));
+            	g2d.drawRect(0, 0, 2, 2);
+            	g2d.translate(-this.getNodeX(node), -this.getNodeY(node));
+            }
+        }
+        
+        
         // Draw path
-        g2d.setColor(Color.YELLOW);
-        for (int i = 0; i < path.size(); i++) {
-        	if (i < path.size() - 1) {
-        		Node n1 = path.get(i);
-        		Node n2 = path.get(i + 1);
-	        	g2d.drawLine(xPos + cellSize * n1.getX() + (cellSize / 2), yPos + cellSize * n1.getY() + (cellSize / 2),
-	    				xPos + cellSize * n2.getX() + (cellSize / 2), yPos + cellSize * n2.getY() + (cellSize / 2));
-        	}
+        if (path != null) {
+	        g2d.setColor(Color.YELLOW);
+	        for (int i = 0; i < path.size(); i++) {
+	        	if (i < path.size() - 1) {
+	        		Node n1 = path.get(i);
+	        		Node n2 = path.get(i + 1);
+		        	g2d.drawLine(xPos + cellSize * n1.getX() + (cellSize / 2), yPos + cellSize * n1.getY() + (cellSize / 2),
+		    				xPos + cellSize * n2.getX() + (cellSize / 2), yPos + cellSize * n2.getY() + (cellSize / 2));
+	        	}
+	        }
         }
 		
 		if (activeNode != null) {
@@ -224,7 +241,11 @@ public class Grid {
 	}
 	
 	public double getNodeX(final Node node) {
-		return xPos + (node.getX() * cellSize) + (cellSize / 2);
+		double cellHalf = (double)cellSize / 2;
+		
+		double result = xPos + ((double)(node.getX() * cellSize)) + cellHalf;
+//		System.out.println(result);
+		return result;
 	}
 	public double getNodeY(final Node node) {
 		return yPos + (node.getY() * cellSize) + (cellSize / 2);

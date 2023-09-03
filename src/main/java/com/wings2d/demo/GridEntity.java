@@ -25,8 +25,11 @@ public class GridEntity {
 	protected List<Node> path;
 	protected int curNode;
 	protected Node node;
+	protected double startX, startY;
+	protected double xDist, yDist; // Distance from start to target location
+	protected double movedAmt; // 0 - 1, with 0 being at start loc, 1 being at end loc
 	
-	private double speed = 100;
+	private double speed = 10;
 	
 	public GridEntity(final Grid grid, final Node playerNode) {
 		this.grid = grid;
@@ -54,15 +57,15 @@ public class GridEntity {
 		this.y = y;
 	}
 	
-	public void translate(final double x, final double y, final double dt) {
-		translateX(x, dt);
-		translateY(y, dt);
+//	public void translate(final double x, final double y, final double dt) {
+//		translateX(x, dt);
+//		translateY(y, dt);
+//	}
+	public void translateX(final double xAmt) {
+		this.x += xAmt;
 	}
-	public void translateX(final double x, final double dt) {
-		this.x += (x * dt);
-	}
-	public void translateY(final double y, final double dt) {
-		this.y += (y * dt);
+	public void translateY(final double yAmt) {
+		this.y += yAmt;
 	}
 	
 	public void setPath(List<Node> path) {
@@ -72,9 +75,15 @@ public class GridEntity {
 		setTarget(node);
 	}
 	
-	public void setTarget(final Node n) {
-		this.targetX = grid.getNodeX(n);
-		this.targetY = grid.getNodeY(n);
+	public void setTarget(final double x, final double y) {
+		this.targetX = x;
+		this.targetY = y;
+		this.xDist = this.targetX - this.getX();
+		this.yDist = this.targetY - this.getY();
+		this.startX = this.getX();
+		this.startY = this.getY();
+		this.movedAmt = 0;
+		
 		if (this.x > this.targetX) {
 			this.xDir = Dir.NEG;
 		}
@@ -97,20 +106,27 @@ public class GridEntity {
 		this.state = EntityState.MOVING;
 	}
 	
+	public void setTarget(final Node n) {
+		this.setTarget(grid.getNodeX(n), grid.getNodeY(n));
+	}
+	
 	public void update(final double dt) {
 		switch(state) {
 		case IDLE -> {}
 		case MOVING -> {
+			this.movedAmt = this.movedAmt + (dt * speed);
 			switch(xDir) {
 			case POS -> {
-				translateX(speed, dt);
-				if (x > targetX) {
+				this.x = this.startX + (this.xDist * this.movedAmt);
+				if (this.x >= this.targetX) {
+					this.x = this.targetX;
 					xDir = Dir.HOLD;
 				}
 			}
 			case NEG -> {
-				translateX(-speed, dt);
-				if (x < targetX) {
+				this.x = this.startX + (this.xDist * this.movedAmt);
+				if (this.x <= this.targetX) {
+					this.x = this.targetX;
 					xDir = Dir.HOLD;
 				}
 			}
@@ -119,14 +135,16 @@ public class GridEntity {
 			
 			switch(yDir) {
 			case POS -> {
-				translateY(speed, dt);
-				if (y > targetY) {
+				this.y = this.startY + (this.yDist * this.movedAmt);
+				if (this.y >= this.targetY) {
+					this.y = this.targetY;
 					yDir = Dir.HOLD;
 				}
 			}
 			case NEG -> {
-				translateY(-speed, dt);
-				if (y < targetY) {
+				this.y = this.startY + (this.yDist * this.movedAmt);
+				if (this.y <= this.targetY) {
+					this.y = this.targetY;
 					yDir = Dir.HOLD;
 				}
 			}
@@ -136,14 +154,6 @@ public class GridEntity {
 			if ((xDir == Dir.HOLD) && (yDir == Dir.HOLD)) {
 				if (curNode < path.size() - 1) {
 					curNode++;
-					
-					// Why does this hang instead of raising exception if I don't catch it here?
-//					try {
-//					System.out.println(path.get(2));
-//					}
-//					catch (Exception e){
-//						System.out.println(e.getMessage());
-//					}
 					node = path.get(curNode);
 					setTarget(path.get(curNode));
 				}
@@ -158,10 +168,13 @@ public class GridEntity {
 	
 	public void render(final Graphics2D g2d, final double scale) {
 		g2d.setColor(Color.BLUE);
-		g2d.translate(getX() * scale, getY() * scale);
-		int size = 20;
-		g2d.fillRect((int)(0 - (size / 2) * scale), (int)(0 - (size / 2) * scale), (int)(size * scale), (int)(size * scale));
-		g2d.translate(-getX() * scale, -getY() * scale);
+		double size = 20;
+		double xAmt = getX() - ((size / 2) * scale);
+		double yAmt = getY() - ((size / 2) * scale);
+		g2d.translate(xAmt, yAmt);
+		
+		g2d.fillRect(0, 0, (int)(size * scale), (int)(size * scale));
+		g2d.translate(-xAmt, -yAmt);
 	}
 	
 	public Node getNode() {
