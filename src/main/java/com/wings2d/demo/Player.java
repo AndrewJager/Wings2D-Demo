@@ -8,7 +8,10 @@ import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import com.wings2d.framework.core.Grid;
+import com.wings2d.framework.core.GridEntity;
 import com.wings2d.framework.core.LevelManager;
+import com.wings2d.framework.core.Node;
 
 public class Player extends GridEntity{
 	@SuppressWarnings("serial")
@@ -77,12 +80,12 @@ public class Player extends GridEntity{
 	}
 	
 	public void update(final double dt) {
-		if (moveRight) {
-			x = x + (100 * dt);
-		}
-		if (moveLeft) {
-			x = x - (100 * dt);
-		}
+//		if (moveRight) {
+//			x = x + (100 * dt);
+//		}
+//		if (moveLeft) {
+//			x = x - (100 * dt);
+//		}
 	}
 	
 	public void render(final Graphics2D g2d, final double scale) {
@@ -106,9 +109,9 @@ public class Player extends GridEntity{
 	}
 	
 	public double GetX() {
-		return x;
+		return loc.getX().getUnscaled();
 	}
 	public double GetY() {
-		return y;
+		return loc.getY().getUnscaled();
 	}
 }

@@ -12,12 +12,14 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import com.wings2d.framework.core.Game;
+import com.wings2d.framework.core.Grid;
+import com.wings2d.framework.core.LevelManager;
 import com.wings2d.framework.misc.Easings;
 import com.wings2d.framework.rendering.DrawPanelJPanel;
 
 public class MyGame extends Game{
 //	private Player player;
-	private Grid grid;
+	
 
 	public MyGame() {
 		super(800, 600, 120);
@@ -29,6 +31,9 @@ public class MyGame extends Game{
 		
 		this.setTitle("Wings2D Demo");
 		
+		new TestScene(this.getManager(), 0, this.getDrawPanel());
+		
+		
 		
 //		grid = new Grid(5, 4, this.getDrawPanel().getDrawComponent());
 		
@@ -38,38 +43,29 @@ public class MyGame extends Game{
 //		System.out.println(Easings.easeInElastic(1));
 		
 		
-		grid = new Grid(25, 15, this.getDrawPanel(), this.getManager());
+		
 //		player = new Player(grid, grid.getNodes()[1][1]);
 //		player.BuildInput(getFullPanel());
 //		
-		JLabel test = new JLabel("Test");
-		this.getDrawPanel().add(test);
+
+		
+//		new LevelManager.Coord(this.getManager());
 	}
 	
 	@Override
 	public void update(final double delta) {
 		super.update(delta);
 		
-		grid.update(delta);
 	}
 	
 	@Override
 	public void render(final Graphics2D g2d) {
 		super.render(g2d);
 		
-		double scale = this.getManager().getScale();
-
-		g2d.setColor(Color.WHITE);
-		g2d.drawString("FPS: " + this.getDebugInfo().getFPS(), 10, 10);
-		
-//		player.render(g2d, scale);
-		
-		grid.render(g2d, scale, this);
 	}
 
 	@Override
 	public void onResize(final DrawPanelJPanel draw) {
 		super.onResize(draw);
-		grid.recalcGridSize(this);
 	}
 }
