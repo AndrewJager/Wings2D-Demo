@@ -47,5 +47,10 @@ public class TestScene extends Level{
 	
 	public void rescale() {
 		grid.recalcGridSize(panel);
+
+	}
+	
+	@Override
+	public void afterRescale() {
 	}
 }
