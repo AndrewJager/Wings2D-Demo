@@ -8,26 +8,31 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import com.wings2d.framework.core.Level;
-import com.wings2d.framework.core.LevelManager;
+import com.wings2d.framework.core.Scene;
+import com.wings2d.framework.core.SceneManager;
 
 import com.wings2d.framework.svg.SVGImporter;
 import com.wings2d.framework.svg.SVGShapeGroup;
 
-public class DemoScene extends Level{
+public class DemoScene extends Scene{
 	private SVGShapeGroup g;
 	private int startDragX, startDragY;
 	private int appliedDragX, appliedDragY;
 	private boolean move;
+	private AffineTransform t;
 
-	public DemoScene(LevelManager manager, int thisLevel) {
-		super(manager, thisLevel);
+	public DemoScene(final SceneManager manager) {
+		super("Demo");
 		
 		g = SVGImporter.importSVG("src/data/Drawing.svg");
+		this.addObject(g);
 		move = false;
+		t = new AffineTransform();
 		
 		JPanel p = manager.getGame().getDrawPanel();
 		p.addMouseListener(new MouseListener() {
@@ -62,16 +67,21 @@ public class DemoScene extends Level{
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				if (SwingUtilities.isLeftMouseButton(e)) {
-					int x = e.getX() - startDragX;
-					int y = e.getY() - startDragY;
-					x = x - appliedDragX;
-					y = y - appliedDragY;
-					appliedDragX += x;
-					appliedDragY += y;
-					
-					AffineTransform t = new AffineTransform();
-					t.translate(x, y);
-					g.applyTransform(t);
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							int x = e.getX() - startDragX;
+							int y = e.getY() - startDragY;
+							x = x - appliedDragX;
+							y = y - appliedDragY;
+							appliedDragX += x;
+							appliedDragY += y;
+							
+							t.translate(x, y);
+//							g.applyTransform(t);
+//							g.endUpdate();
+						}
+					});
 				}
 			}
 			@Override
@@ -80,25 +90,36 @@ public class DemoScene extends Level{
 		p.addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
-				AffineTransform t = new AffineTransform();
-				if (e.getWheelRotation() > 0) {
-					t.scale(1.1, 1.1);
-				}
-				else {
-					t.scale(0.9, 0.9);
-				}
-				g.applyTransform(t);
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+//						AffineTransform t = new AffineTransform();
+						if (e.getWheelRotation() > 0) {
+							t.scale(1.1, 1.1);
+						}
+						else {
+							t.scale(0.9, 0.9);
+						}
+//						g.applyTransform(t);
+					}
+				});
 			}
 		});
 	}
 	
 	@Override
 	public void render(final Graphics2D g2d) {
+		g2d.transform(t);
 		g.render(g2d);
-		
-		String fps = String.valueOf(this.getManager().getGame().getDebugInfo().getFPS());
+	}
+	
+	@Override
+	public void renderUI(final Graphics2D g2d) {
+		String updateFps = String.valueOf(this.getManager().getGame().getDebugInfo().getUpdateFPS());
+		String renderFps = String.valueOf(this.getManager().getGame().getDebugInfo().getRenderFPS());
 		g2d.setColor(Color.WHITE);
-		g2d.drawString("FPS: " + fps, 10, 20);
+		g2d.drawString("Update FPS: " + updateFps, 10, 20);
+		g2d.drawString("Render FPS: " + renderFps, 10, 40);
 	}
 	
 	@Override
@@ -109,6 +130,8 @@ public class DemoScene extends Level{
 			t.translate(amt, 0);
 			g.applyTransform(t);
 		}
+		
+		g.endUpdate();
 	}
 
 }
