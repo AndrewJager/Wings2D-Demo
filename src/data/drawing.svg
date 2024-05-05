@@ -24,8 +24,8 @@
      inkscape:document-units="px"
      showgrid="false"
      inkscape:zoom="1.4396184"
-     inkscape:cx="153.16559"
-     inkscape:cy="348.3562"
+     inkscape:cx="324.73883"
+     inkscape:cy="180.95073"
      inkscape:window-width="1920"
      inkscape:window-height="1001"
      inkscape:window-x="-9"
@@ -35,6 +35,12 @@
      units="mm" />
   <defs
      id="defs2">
+    <rect
+       x="414.69323"
+       y="27.090512"
+       width="241.0361"
+       height="110.44593"
+       id="rect4817" />
     <rect
        x="31.258284"
        y="386.90809"
@@ -119,5 +125,14 @@
        style="fill:none;stroke:#000000;stroke-width:10.82834646;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
        d="m 379.26718,118.08685 45.15085,211.16707 121.56,-164.62696 -106.27817,17.36572"
        id="path3143" />
+    <text
+       xml:space="preserve"
+       id="text4815"
+       style="font-size:86.6667px;line-height:1.25;font-family:'Baskerville Old Face';white-space:pre;shape-inside:url(#rect4817);-inkscape-font-specification:'Baskerville Old Face, Normal';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ff0000;fill-opacity:1"><tspan
+         x="414.69336"
+         y="106.70938"
+         id="tspan9157"><tspan
+           style="font-size:86.6667px"
+           id="tspan9155">Hello!</tspan></tspan></text>
   </g>
 </svg>

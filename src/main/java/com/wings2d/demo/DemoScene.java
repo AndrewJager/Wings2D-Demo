@@ -1,6 +1,7 @@
 package com.wings2d.demo;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
@@ -19,6 +20,7 @@ public class DemoScene extends Scene{
 	private int appliedDragX, appliedDragY;
 	private boolean move;
 	private AffineTransform t;
+	private Font f;
 
 	public DemoScene(final SceneManager manager) {
 		super("Demo");
@@ -84,8 +86,8 @@ public class DemoScene extends Scene{
 	
 	@Override
 	public void renderUI(final Graphics2D g2d) {
-		String updateFps = String.valueOf(this.getManager().getGame().getDebugInfo().getUpdateFPS());
-		String renderFps = String.valueOf(this.getManager().getGame().getDebugInfo().getRenderFPS());
+		String updateFps = String.valueOf(this.getManager().getGame().getDebugInfo().getUpdateLoopStats().getFps());
+		String renderFps = String.valueOf(this.getManager().getGame().getDebugInfo().getRenderLoopStats().getFps());
 		g2d.setColor(Color.WHITE);
 		g2d.drawString("Update FPS: " + updateFps, 10, 20);
 		g2d.drawString("Render FPS: " + renderFps, 10, 40);

@@ -3,17 +3,29 @@ package com.wings2d.demo;
 import java.awt.Graphics2D;
 
 import java.awt.Shape;
-
+import java.util.HashMap;
+import java.util.Map;
 
 import com.wings2d.framework.core.DrawPanelJPanel;
 import com.wings2d.framework.core.Game;
 record MyChar(Shape shape, float x) { }
 
-public class MyGame extends Game{
 
+
+public class MyGame extends Game<Commands>{
 
 	public MyGame() {
 		super(800, 600, 240);
+
+		getCommands().put(Commands.ONE, () -> {
+			hi();
+		});
+		
+		OnCommand n = () -> {};
+	}
+	
+	public void hi() {
+		System.out.println("HI!");
 	}
 	
 	@Override
